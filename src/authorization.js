@@ -7,14 +7,9 @@ const { config, isConfigFinished, log } = require("./utils");
 
 module.exports = {
   helpConfigure: async () => {
-    /* if (isConfigFinished(config())) {
+    if (isConfigFinished(config())) {
       return log("Google Drive access already initialized !");
-    } */
-
-    /*     async function ask(question) {
-      const answer = await prompt(question);
-      return answer[question.name];
-    } */
+    }
 
     questions = [
       {
@@ -33,22 +28,25 @@ module.exports = {
       },
     ];
 
-    /*    const authMode = await ask(questions[0]);
-    console.log("authMode", authMode); */
+    async function ask(question) {
+      const answer = await prompt(question);
+      return answer[question.name];
+    }
 
-    const answer0 = await prompt(questions[0]);
-    if (answer0.authMode === "Service Account") {
+    const authMode = await ask(questions[0]);
+    if (authMode.includes("Service Account")) {
       return log("This option is not yet available.");
     }
-    if (answer0.authMode === "OAuth") {
-      const answer1 = await prompt(questions[1]);
-      const credPath = path.resolve(path.dirname(__filename), answer1.credPath);
+    if (authMode.includes("OAuth")) {
+      const relativePath = await ask(questions[1]);
+      if (!relativePath) return log("Path is not defined");
+      const fullPath = path.resolve(path.dirname(__filename), relativePath);
       try {
-        fs.accessSync(credPath);
+        fs.accessSync(fullPath);
       } catch {
         // return to second question
         return log(
-          "File not found. Check if path given is correct : " + credPath
+          "File not found. Check if path given is correct : " + fullPath
         );
       }
       const file = fs.readFileSync(credPath);

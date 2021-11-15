@@ -3,7 +3,7 @@ const pkg = require("../package.json");
 
 module.exports = {
   log: (message) => {
-    return console.log(message);
+    return console.log("  " + message);
   },
   config: () => {
     return new configstore(pkg.name);
