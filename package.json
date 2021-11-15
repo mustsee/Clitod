@@ -1,0 +1,19 @@
+{
+  "name": "clitod-v2",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "bin/clitod.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "configstore": "^3.1.5",
+    "inquirer": "^8.2.0",
+    "minimist": "^1.2.5",
+    "ora": "^5.4.1",
+    "googleapis": "^39.2.0"
+  }
+}
