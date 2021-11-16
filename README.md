@@ -20,3 +20,14 @@ Examples:
 ```
 
 ## Quickstart
+
+## Documentation
+
+CJS :
+
+- https://www.sitepoint.com/javascript-command-line-interface-cli-node-js/
+  - https://github.com/sitepoint-editors/ginit : minimist, inquirer
+
+ESM :
+
+- https://www.twilio.com/blog/how-to-build-a-cli-with-node-js

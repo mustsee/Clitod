@@ -1,40 +1,36 @@
-const minimist = require("minimist");
+const clear = require("clear");
+const chalk = require("chalk");
+const figlet = require("figlet");
 
-const { helpConfigure } = require("./authorization");
-const { chooseFolder } = require("./folder");
-const { config, log } = require("./utils");
+const googleDrive = require("./googleDrive");
 
-module.exports = {
-  run(argv) {
-    const args = minimist(argv);
-    const firstCommand = args._[0];
-    if (firstCommand === "check") {
-      // Check if config file is present
-      this.checkConfiguration();
-    } else if (firstCommand === "configure") {
-      helpConfigure();
-    } else if (firstCommand === "folder") {
-      chooseFolder();
-    } else if (firstCommand === "screenshot") {
-      this.screenshot(args._.slice(1));
-    } else {
-      this.showHelp();
-    }
-  },
+clear();
 
-  checkConfiguration: () => {
-    if (!config().has("configFinished")) {
-      return log(
-        "First configure the access to your Google Drive account before continuing"
-      );
-    }
-    return log("You're all set !");
-  },
+console.log(chalk.blue(figlet.textSync("Clitod", { font: "Lean" })));
 
-  screenshot: (args) => {
-    console.log("func screenshot", args);
-  },
-  showHelp: () => {
-    console.log("func showHelp");
-  },
+const getGoogleDriveToken = async () => {
+  // Fetch token from config store
+  let token = googleDrive.getStoredGoogleDriveToken();
+  if (token) {
+    return token;
+  }
+
+  // No token found, use credentials to access Google Drive account
+  token = await googleDrive.getPersonnalAccessToken();
+
+  return token;
 };
+
+module.exports = (async () => {
+  try {
+    // Retrieve & Set Authentication Token
+    const token = await getGoogleDriveToken();
+    googleDrive.googleDriveAuth(token);
+
+    // handle commands
+    // folder
+    // screenshot
+  } catch (e) {
+    console.log("Error", e);
+  }
+})();
