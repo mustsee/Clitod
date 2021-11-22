@@ -110,6 +110,7 @@ const takeScreenshot = async (auth, folder, url, name) => {
       },
       (e) => {
         if (e) throw new Error(e);
+        fs.unlinkSync(`./${name}.jpeg`);
         console.log("Successfully download to google drive");
       }
     );
