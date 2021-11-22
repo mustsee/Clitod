@@ -1,7 +1,11 @@
+const fs = require("fs");
 const clear = require("clear");
 const chalk = require("chalk");
+const isUrl = require("is-url");
 const figlet = require("figlet");
+const { google } = require("googleapis");
 const minimist = require("minimist");
+const puppeteer = require("puppeteer");
 
 const googleDrive = require("./googleDrive");
 const inquirer = require("./inquirer");
@@ -35,7 +39,7 @@ const getGoogleDriveAuth = async () => {
   return await googleDrive.getGoogleDriveAuth(credentials, token);
 };
 
-const getTargetFolder = async () => {
+const getTargetFolder = async (auth) => {
   let target = folder.getStoredTargetFolder();
 
   if (target) {
@@ -76,7 +80,41 @@ const chooseTargetFolder = async (
       console.log("No folders found.");
     }
   } catch (e) {
-    console.log("Error : ", e);
+    throw new Error(e);
+  }
+};
+
+const takeScreenshot = async (auth, folder, url, name) => {
+  if (!name || !isUrl(url)) console.log("Error in options : name or in URL");
+  try {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    await page.screenshot({ path: `${name}.jpeg`, fullPage: true });
+    await browser.close();
+    console.log("Successfully took a screenshot of " + name);
+    const drive = google.drive({ version: "v3", auth });
+    var fileMetadata = {
+      name: `${name}.jpeg`,
+      parents: [`${folder.id}`],
+    };
+    var media = {
+      mimeType: "image/jpeg",
+      body: fs.createReadStream(`./${name}.jpeg`),
+    };
+    drive.files.create(
+      {
+        resource: fileMetadata,
+        media: media,
+        fields: "id",
+      },
+      (e) => {
+        if (e) throw new Error(e);
+        console.log("Successfully download to google drive");
+      }
+    );
+  } catch (e) {
+    throw new Error(e);
   }
 };
 
@@ -86,16 +124,17 @@ module.exports = (async () => {
     const auth = await getGoogleDriveAuth();
     const folder = await getTargetFolder(auth);
 
-    const args = minimist(process.argv.slice(2));
+    const string = ["url", "name"];
+    const args = minimist(process.argv.slice(2), { string });
 
     if (args._.includes("folder")) {
       chooseTargetFolder(auth);
     } else if (args._.includes("screenshot")) {
-      // screenshot
+      takeScreenshot(auth, folder, args.url, args.name);
     } else {
-      console.log("Help");
-      // Command not found
-      // Show help
+      console.log(
+        "Please usage section on the following github page : https://github.com/mustsee/clitod"
+      );
     }
   } catch (e) {
     console.log("Error", e);

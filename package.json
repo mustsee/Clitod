@@ -14,9 +14,11 @@
     "clear": "^0.1.0",
     "configstore": "^3.1.5",
     "figlet": "^1.5.2",
-    "googleapis": "^39.2.0",
+    "googleapis": "^91.0.0",
     "inquirer": "^8.2.0",
+    "is-url": "^1.2.4",
     "minimist": "^1.2.5",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "puppeteer": "^11.0.0"
   }
 }
