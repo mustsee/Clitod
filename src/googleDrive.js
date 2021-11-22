@@ -10,10 +10,28 @@ const conf = new Configstore(pkg.name);
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
 
 module.exports = {
-  getStoredGoogleDriveToken: () => {
+  getStoredToken: () => {
     return conf.get("googleDrive.token");
   },
-  googleDriveAuth: () => {},
+  getStoredCredentials: () => {
+    return conf.get("googleDrive.credentials");
+  },
+  deleteStoredData: () => {
+    return conf.clear();
+  },
+  getGoogleDriveAuth: async (credentials, token) => {
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
+
+    const auth = new google.auth.OAuth2(
+      client_id,
+      client_secret,
+      redirect_uris[0]
+    );
+
+    auth.setCredentials(token);
+
+    return auth;
+  },
   getPersonnalAccessToken: async () => {
     const pathToFile = await inquirer.askPathCredentials();
     const credentials = files.readFile(files.fullPath(pathToFile.relativePath));
@@ -25,6 +43,8 @@ module.exports = {
       redirect_uris[0]
     );
 
+    conf.set("googleDrive.credentials", credentials);
+
     const authUrl = await oAuth2Client.generateAuthUrl({
       access_type: "offline",
       scope: SCOPES,
@@ -35,8 +55,8 @@ module.exports = {
 
     const token = await oAuth2Client.getToken(authorize.code);
     if (token) {
-      conf.set("googleDrive.token", token);
-      return token;
+      conf.set("googleDrive.token", token.res.data);
+      return;
     } else {
       throw new Error("Google Drive token was not found in the response");
     }

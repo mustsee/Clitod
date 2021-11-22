@@ -14,7 +14,7 @@
     "clear": "^0.1.0",
     "configstore": "^3.1.5",
     "figlet": "^1.5.2",
-    "googleapis": "^91.0.0",
+    "googleapis": "^39.2.0",
     "inquirer": "^8.2.0",
     "minimist": "^1.2.5",
     "ora": "^5.4.1"

@@ -31,4 +31,34 @@ module.exports = {
       },
     });
   },
+  display: ({ files, nextPageToken }) => {
+    let choices = files.map(({ id, name }) => {
+      return {
+        name: name,
+        value: { id, name },
+      };
+    });
+    if (nextPageToken) {
+      choices.push(new inquirer.Separator());
+      choices.push({ name: "Next page", value: { nextPage: nextPageToken } });
+      choices.push(new inquirer.Separator());
+    }
+    return inquirer.prompt({
+      name: "display",
+      type: "list",
+      message: "Select folder",
+      choices,
+    });
+  },
+  select: ({ id, name }) => {
+    return inquirer.prompt({
+      name: "select",
+      type: "list",
+      message: "Select target folder",
+      choices: [
+        { name, value: { id, name } },
+        { name: "Go inside folder", value: { children: true, id, name } },
+      ],
+    });
+  },
 };
