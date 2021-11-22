@@ -133,7 +133,7 @@ module.exports = (async () => {
       takeScreenshot(auth, folder, args.url, args.name);
     } else {
       console.log(
-        "Please usage section on the following github page : https://github.com/mustsee/clitod"
+        "Please see usage section on the following github page : https://github.com/mustsee/clitod \n"
       );
     }
   } catch (e) {

@@ -16,13 +16,21 @@ Then you can updload a file :
 ## Quickstart
 
 1. Clone the repository
-2. Then you need to obtain OAuth 2.0 credentials from the Google API Console, visit : https://console.cloud.google.com/apis/credentials
+2. Go to the Google Developers Console : https://console.cloud.google.com/cloud-resource-manager
+
+- Select your project or create a new one (and then select it)
+- In the sidebar on the left, expand APIs & auth > APIs
+- Search for "drive"
+- Click on "Drive API"
+- click the blue "Enable API" button
+
+3. Then you need to obtain OAuth 2.0 credentials from the Google API Console, visit : https://console.cloud.google.com/apis/credentials
 
 - Click "+ CREATE CREDENTIALS" and select "Oauth Client ID" option
 - Select an application type, no need to set up authorized domains / callback URIs
 - Download the json file created and put it inside the cloned repository.
 
-3. Assuming we are inside the clitod repository, type `node bin/clitod.js` and follow the instructions
+4. Assuming we are inside the clitod repository, type `node bin/clitod.js` and follow the instructions
 
 - First you will connect to your Google Drive account
 - Then you will choose a target folder
