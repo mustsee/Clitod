@@ -35,7 +35,7 @@ Then you can updload a file :
 - First you will connect to your Google Drive account
 - Then you will choose a target folder
 
-4. Finally, you can take a screenshot, it will automatically put it in the chosen folder : see example in usage section.
+5. Finally, you can take a screenshot, it will automatically put it in the chosen folder : see example in usage section.
 
 ## Usage
 
