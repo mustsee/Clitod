@@ -35,13 +35,24 @@ const getGoogleDriveAuth = async () => {
   return await googleDrive.getGoogleDriveAuth(credentials, token);
 };
 
+const getTargetFolder = async () => {
+  let target = folder.getStoredTargetFolder();
+
+  if (target) {
+    console.log(`Your current target folder name is : ${target.name} \n`);
+    return target;
+  }
+
+  return await chooseTargetFolder(auth);
+};
+
 const chooseTargetFolder = async (
   auth,
   folderId = "root",
   pageToken = null
 ) => {
   try {
-    let { files, nextPageToken } = await folder.get(auth, folderId, pageToken);
+    let { files, nextPageToken } = await folder.list(auth, folderId, pageToken);
     if (files.length) {
       const { display } = await inquirer.display({
         files,
@@ -55,9 +66,10 @@ const chooseTargetFolder = async (
           chooseTargetFolder(auth, select.id, null);
         } else {
           conf.set("googleDrive.folder", { id: select.id, name: select.name });
-          return console.log(
-            `Successfully set ${select.name} has the target folder !`
+          console.log(
+            `\nSuccessfully set ${select.name} has the target folder !\n`
           );
+          return { id: select.id, name: select.name };
         }
       }
     } else {
@@ -72,18 +84,16 @@ module.exports = (async () => {
   try {
     // Get Google Drive instance
     const auth = await getGoogleDriveAuth();
-    //const folder = await getTargetFolder();
+    const folder = await getTargetFolder(auth);
 
     const args = minimist(process.argv.slice(2));
 
-    console.log("target folder name : ", conf.get("googleDrive.folder").name);
-
     if (args._.includes("folder")) {
-      // Choose target folder
       chooseTargetFolder(auth);
     } else if (args._.includes("screenshot")) {
       // screenshot
     } else {
+      console.log("Help");
       // Command not found
       // Show help
     }

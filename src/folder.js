@@ -1,7 +1,15 @@
+const ConfigStore = require("configstore");
 const { google } = require("googleapis");
 
+const pkg = require("../package.json");
+
+const conf = new ConfigStore(pkg.name);
+
 module.exports = {
-  get: async (auth, folderId, pageToken) => {
+  getStoredTargetFolder: () => {
+    return conf.get("googleDrive.folder");
+  },
+  list: async (auth, folderId, pageToken) => {
     const drive = google.drive({ version: "v3", auth });
     try {
       const res = await drive.files.list({
