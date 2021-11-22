@@ -86,7 +86,8 @@ const chooseTargetFolder = async (
 };
 
 const takeScreenshot = async (auth, folder, url, name) => {
-  if (!name || !isUrl(url)) console.log("Error in options : name or in URL");
+  if (!name || !isUrl(url))
+    return console.log("Error in options : name or in URL");
   try {
     const spinner = ora("Taking a screenshot...").start();
     const browser = await puppeteer.launch();
@@ -95,7 +96,6 @@ const takeScreenshot = async (auth, folder, url, name) => {
     await page.screenshot({ path: `${name}.jpeg`, fullPage: true });
     await browser.close();
     spinner.succeed("Successfully took a screenshot of " + name);
-    //console.log("Successfully took a screenshot of " + name);
     spinner.start("Download to Google Drive");
     const drive = google.drive({ version: "v3", auth });
     var fileMetadata = {
@@ -113,13 +113,16 @@ const takeScreenshot = async (auth, folder, url, name) => {
         fields: "id",
       },
       (e) => {
-        if (e) throw new Error(e);
+        if (e) {
+          spinner.fail("Error... Please try again");
+          throw new Error(e);
+        }
         fs.unlinkSync(`./${name}.jpeg`);
         spinner.succeed("Successfully downloaded to Google Drive");
-        //console.log("Successfully downloaded to Google Drive");
       }
     );
   } catch (e) {
+    spinner.fail("Error... Please try again");
     throw new Error(e);
   }
 };
